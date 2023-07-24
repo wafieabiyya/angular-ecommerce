@@ -1,0 +1,40 @@
+<div class="product__discount">
+    <div class="section-title product__discount__title">
+        <h2>Product Details</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+            <div class="product__details__pic__item">
+                <img class="product__details__pic__item--large" src="{{product.imageUrl}}" alt="">
+            </div>
+        </div>
+        <a class="text-primary text-decoration-none" routerLink="/products">
+            <i class="fa fa-chevron-circle-left"></i> Back To Products
+        </a>
+    </div>
+    <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+            <h3>{{product.name}}</h3>
+            <div class="product__details__rating">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star-half-o"></i>
+                <span>(18 reviews)</span>
+            </div>
+            <div class="product__details__price">{{product.unitPrice| currency: "USD"}}</div>
+            <div>
+                <b>Description</b>
+            </div>
+            <p>{{product.description}}</p>
+            <button (click)="addToCart(product)" class="primary-btn">ADD TO CARD</button>
+            <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+            <ul>
+                <li><b>Stock</b> <span>100</span></li>
+            </ul>
+        </div>
+    </div>
+</div>

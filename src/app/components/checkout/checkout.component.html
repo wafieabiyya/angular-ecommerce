@@ -1,0 +1,225 @@
+<div class="container">
+    <div class="checkout__form">
+        <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-lg-7 col-md-6">
+                    <div formGroupName="customer">
+                        <h4>Customers</h4>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>First Name<span>*</span></p>
+                                    <input formControlName="firstName" type="text">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Last Name<span>*</span></p>
+                                    <input formControlName="lastName" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Email<span>*</span></p>
+                                    <input formControlName="email" type="email">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Phone<span>*</span></p>
+                                    <input formControlName="phone" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div formGroupName="shippingAddress">
+                        <h4>Shipping Address</h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="checkout__input">
+                                    <p>Country<span>*</span></p>
+                                    <select formControlName="country" 
+                                        class="form-control" 
+                                        id="selectedCountry">
+                                        <option value="ID">Indonesia</option>
+                                        <option value="US">United States</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="checkout__input">
+                                    <p>State<span>*</span></p>
+                                    <select formControlName="state" 
+                                        class="form-control" 
+                                        id="selectedState">
+                                        <option value="Jabar">Jawa Barat</option>
+                                        <option value="Jateng">Jawa Tengah</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>City<span>*</span></p>
+                                    <input formControlName="city" type="text">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Postcode / ZIP<span>*</span></p>
+                                    <input formControlName="zipCode" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Street<span>*</span></p>
+                            <input formControlName="street" type="text">
+                        </div>
+                    </div>
+                    <div class="checkout__input__checkbox">
+                        <label>
+                            Billing Address same as with Shipping Address?
+                            <input type="checkbox" 
+                                (change)="copyToBillingAddress($event)">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <div formGroupName="billingAddress">
+                        <h4>Billing Address</h4>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="checkout__input">
+                                    <p>Country<span>*</span></p>
+                                    <select formControlName="country" 
+                                        class="form-control" 
+                                        id="selectedCountry">
+                                        <option value="ID">Indonesia</option>
+                                        <option value="US">United States</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="checkout__input">
+                                    <p>State<span>*</span></p>
+                                    <select formControlName="state" 
+                                        class="form-control" 
+                                        id="selectedState">
+                                        <option value="Jabar">Jawa Barat</option>
+                                        <option value="Jateng">Jawa Tengah</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>City<span>*</span></p>
+                                    <input formControlName="city" type="text">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Postcode / ZIP<span>*</span></p>
+                                    <input formControlName="zipCode" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Street<span>*</span></p>
+                            <input formControlName="street" type="text">
+                        </div>
+                    </div>
+                    <div formGroupName="creditCard">
+                        <h4>Credit Card</h4>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Card Type<span>*</span></p>
+                                    <select formControlName="cardType" 
+                                        class="form-control" 
+                                        id="selectedCountry">
+                                        <option>Credit</option>
+                                        <option>Debit</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Name on Card<span>*</span></p>
+                                    <input formControlName="nameOnCard" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkout__input">
+                            <p>Card Number<span>*</span></p>
+                            <input formControlName="cardNumber" type="text">
+                        </div>
+                        <div class="checkout__input">
+                            <p>Security Code<span>*</span></p>
+                            <input formControlName="securityCode" type="text">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Exp Month<span>*</span></p>
+                                    <select formControlName="expirationMonth" 
+                                    class="form-control" 
+                                    id="selectedCountry">
+                                        <option>Jan</option>
+                                        <option>Feb</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="checkout__input">
+                                    <p>Exp Year<span>*</span></p>
+                                    <input formControlName="expirationYear" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-6">
+                    <div class="checkout__order">
+                        <h4>Your Order</h4>
+                        <div class="checkout__order__products">Products <span>Total</span></div>
+                        <ul>
+                            <li>Vegetable’s Package <span>$75.99</span></li>
+                            <li>Fresh Vegetable <span>$151.99</span></li>
+                            <li>Organic Bananas <span>$53.99</span></li>
+                        </ul>
+                        <div class="checkout__order__subtotal">Subtotal <span>$750.99</span></div>
+                        <div class="checkout__order__total">Total <span>$750.99</span></div>
+                        <div class="checkout__input__checkbox">
+                            <label for="acc-or">
+                                Create an account?
+                                <input type="checkbox" id="acc-or">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <p>Lorem ipsum dolor sit amet, consectetur adip elit, sed do eiusmod tempor incididunt
+                            ut labore et dolore magna aliqua.</p>
+                        <div class="checkout__input__checkbox">
+                            <label for="payment">
+                                Check Payment
+                                <input type="checkbox" id="payment">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div class="checkout__input__checkbox">
+                            <label for="paypal">
+                                Paypal
+                                <input type="checkbox" id="paypal">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <button type="submit" class="site-btn">PLACE ORDER</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="hero__search__form">
+    <form>
+        <input #myInput type="text"
+        placeholder="What Do You Need"
+        (keyup.enter)="doSearch(myInput.value)"/>
+        <button class="site-btn" (click)="doSearch(myInput.value)">SEARCH</button>
+    </form>
+</div>

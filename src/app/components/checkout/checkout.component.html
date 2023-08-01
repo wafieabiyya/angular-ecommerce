@@ -177,7 +177,10 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Exp Year<span>*</span></p>
-                                    <select class="form-control" formControlName = "expirationYear" id="selectCountry">
+                                    <select class="form-control" 
+                                    formControlName = "expirationYear"
+                                    (change)="handleMonthAndYears()" 
+                                    id="selectCountry">
                                         <option *ngFor="let year of creditCardYears">
                                             {{year}}
                                         </option>

@@ -40,22 +40,21 @@
                             <div class="col-lg-4">
                                 <div class="checkout__input">
                                     <p>Country<span>*</span></p>
-                                    <select formControlName="country" 
-                                        class="form-control" 
-                                        id="selectedCountry">
-                                        <option value="ID">Indonesia</option>
-                                        <option value="US">United States</option>
+                                    <select formControlName="country" (change)="getStates('shippingAddress')"
+                                        class="form-control" id="selectedCountry">
+                                        <option *ngFor=" let country  of countries" [ngValue]="country">
+                                            {{country.name}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-lg-8">
                                 <div class="checkout__input">
                                     <p>State<span>*</span></p>
-                                    <select formControlName="state" 
-                                        class="form-control" 
-                                        id="selectedState">
-                                        <option value="Jabar">Jawa Barat</option>
-                                        <option value="Jateng">Jawa Tengah</option>
+                                    <select formControlName="state" class="form-control" id="selectedState">
+                                        <option *ngFor="let state of shippingAddressStates" [ngValue]="state">
+                                            {{state.name}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -82,8 +81,7 @@
                     <div class="checkout__input__checkbox">
                         <label>
                             Billing Address same as with Shipping Address?
-                            <input type="checkbox" 
-                                (change)="copyToBillingAddress($event)">
+                            <input type="checkbox" (change)="copyToBillingAddress($event)">
                             <span class="checkmark"></span>
                         </label>
                     </div>
@@ -93,22 +91,20 @@
                             <div class="col-lg-4">
                                 <div class="checkout__input">
                                     <p>Country<span>*</span></p>
-                                    <select formControlName="country" 
-                                        class="form-control" 
-                                        id="selectedCountry">
-                                        <option value="ID">Indonesia</option>
-                                        <option value="US">United States</option>
+                                    <select formControlName="country" class="form-control" id="selectedCountry" (change)="getStates('billingAddress')">
+                                        <option *ngFor=" let country  of countries" [ngValue]="country">
+                                            {{country.name}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-lg-8">
                                 <div class="checkout__input">
                                     <p>State<span>*</span></p>
-                                    <select formControlName="state" 
-                                        class="form-control" 
-                                        id="selectedState">
-                                        <option value="Jabar">Jawa Barat</option>
-                                        <option value="Jateng">Jawa Tengah</option>
+                                    <select formControlName="state" class="form-control" id="selectedState">
+                                        <option *ngFor=" let state  of billingAddressStates" [ngValue]="state">
+                                            {{state.name}}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -138,9 +134,7 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Card Type<span>*</span></p>
-                                    <select formControlName="cardType" 
-                                        class="form-control" 
-                                        id="selectedCountry">
+                                    <select formControlName="cardType" class="form-control" id="selectedCountry">
                                         <option>Credit</option>
                                         <option>Debit</option>
                                     </select>
@@ -165,9 +159,7 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Exp Month<span>*</span></p>
-                                    <select formControlName="expirationMonth" 
-                                    class="form-control" 
-                                    id="selectedCountry">
+                                    <select formControlName="expirationMonth" class="form-control" id="selectedCountry">
                                         <option *ngFor="let month of creditCardMonths">
                                             {{month}}
                                         </option>
@@ -177,10 +169,8 @@
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Exp Year<span>*</span></p>
-                                    <select class="form-control" 
-                                    formControlName = "expirationYear"
-                                    (change)="handleMonthAndYears()" 
-                                    id="selectCountry">
+                                    <select class="form-control" formControlName="expirationYear"
+                                        (change)="handleMonthAndYears()" id="selectCountry">
                                         <option *ngFor="let year of creditCardYears">
                                             {{year}}
                                         </option>

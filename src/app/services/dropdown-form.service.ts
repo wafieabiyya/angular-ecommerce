@@ -2,26 +2,26 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, of } from 'rxjs';
 import { Country } from '../common/country';
-import { State } from '@popperjs/core';
+import { State } from '../common/state';
 @Injectable({
   providedIn: 'root'
 })
 export class DropdownFormService {
-  private _countriesUrl = 'http:localhost:8080/api/countries';
-  private _statesUrl = 'http:localhost:8080/api/states';
+  private _countriesUrl = 'http://localhost:8080/api/countries';
+  private _statesUrl = 'http://localhost:8080/api/states';
 
   constructor(private _httpClient: HttpClient) { }
 
   getCountries(): Observable <Country []>{
     return this._httpClient.get<GetResponseCountries>(this._countriesUrl).pipe(
-      map(response =>response._embeded.countries)
+      map(response =>response._embedded.countries)
     )
   }
 
   getStates(theCountryCode: string): Observable <State []>{
     const searchedStateUrl = `${this._statesUrl}/search/findByCountryCode?countryCode=${theCountryCode}`
-    return this._httpClient.get<GetResponseStates>(this._statesUrl).pipe(
-      map(response => response._embeded.states)
+    return this._httpClient.get<GetResponseStates>(searchedStateUrl).pipe(
+      map(response => response._embedded.states)
     )
   }
 
@@ -46,17 +46,16 @@ export class DropdownFormService {
     return of (data)
   }
 
- 
 }
 
 interface GetResponseCountries{
-  _embeded:{
+  _embedded:{
     countries: Country [];
   }
 }
 
 interface GetResponseStates{
-  _embeded:{
+  _embedded:{
     states: State[]
   }
 }

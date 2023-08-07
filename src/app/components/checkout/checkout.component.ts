@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup} from '@angular/forms';
-import { State } from '@popperjs/core';
+import { State } from 'src/app/common/state';
 import { Country } from 'src/app/common/country';
 import { DropdownFormService } from 'src/app/services/dropdown-form.service';
 
@@ -12,8 +12,8 @@ import { DropdownFormService } from 'src/app/services/dropdown-form.service';
 export class CheckoutComponent implements OnInit {
 
   checkoutFormGroup!: FormGroup;
-  billingAddressState: State[] = [];
-  shippingAddressState: State[] = [];
+  billingAddressStates: State[] = [];
+  shippingAddressStates: State[] = [];
 
   creditCardMonths: number[] = []
   creditCardYears: number[] = []
@@ -74,7 +74,7 @@ export class CheckoutComponent implements OnInit {
         this.creditCardYears = data
       }
     )
-
+      //get data countries
     this._dropDownService.getCountries().subscribe(
       data =>{
         this.countries = data;
@@ -113,10 +113,10 @@ export class CheckoutComponent implements OnInit {
         this.checkoutFormGroup.controls['billingAddress'].setValue(
           this.checkoutFormGroup.controls['shippingAddress'].value
         );
-        this.billingAddressState = this.shippingAddressState;
+        this.billingAddressStates = this.shippingAddressStates;
       } else {
         this.checkoutFormGroup.controls['billingAddress'].reset();
-        this.billingAddressState = [];
+        this.billingAddressStates = [];
       }
     }
   }
@@ -133,13 +133,12 @@ export class CheckoutComponent implements OnInit {
     this._dropDownService.getStates(countryCode).subscribe(
       data =>{
         if(formGroupName === 'shippingAddress'){
-
-          this.shippingAddressState = data
+          this.shippingAddressStates = data;
         } else{
-          this.billingAddressState = data
+          this.billingAddressStates = data
         }
         //chose first item as default
-        formGroup?.get('state')?.setValue(data[0])
+        formGroup?.get('state')?.setValue(data[0]);
       }
     )
   }
@@ -154,7 +153,7 @@ export class CheckoutComponent implements OnInit {
     console.log('----');
     console.log(this.checkoutFormGroup.get('creditCard')?.value)
     console.log('----');
-    console.log(`The shipping address country is ${this.checkoutFormGroup.get('shippingAddress')?.value.country.name}`)
-    console.log(`The shipping address country is ${this.checkoutFormGroup.get('shippingAddress')?.value.state.name}`)
+    console.log("The shipping addres country is "+ this.checkoutFormGroup.get('shippingAddress')?.value.country.name)
+    console.log("The billing addres country is "+ this.checkoutFormGroup.get('shippingAddress')?.value.state.name)
   }
 }

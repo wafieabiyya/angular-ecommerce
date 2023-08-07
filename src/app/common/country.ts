@@ -1,8 +1,8 @@
 export class Country {
     constructor (
         public id: number,
-        public name: String,
-        public capital: String,
-        public region: String){ 
+        public name: string,
+        public capital: string,
+        public region: string){ 
         }
 }

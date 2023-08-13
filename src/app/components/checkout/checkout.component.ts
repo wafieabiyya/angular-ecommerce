@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { State } from 'src/app/common/state';
 import { Country } from 'src/app/common/country';
 import { DropdownFormService } from 'src/app/services/dropdown-form.service';
+import { CustomValidators } from 'src/app/validators/custom-validators';
+
 
 @Component({
   selector: 'app-checkout',
@@ -18,7 +20,7 @@ export class CheckoutComponent implements OnInit {
   creditCardMonths: number[] = []
   creditCardYears: number[] = []
 
-  countries :Country [] = [];
+  countries: Country[] = [];
 
   constructor(private _formBuilder: FormBuilder,
     private _dropDownService: DropdownFormService) {
@@ -28,18 +30,41 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.checkoutFormGroup = this._formBuilder.group({
       customer: this._formBuilder.group({
-        firstName: [''],
-        lastName: [''],
-        email: [''],
-        phone: ['']
+        firstName: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          CustomValidators.notOnlyWhiteSpace]),
+        lastName: new FormControl('', [
+          Validators.required, Validators.minLength(2),
+          CustomValidators.notOnlyWhiteSpace]),
+        email: new FormControl('', [
+          Validators.required,
+          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\[a-z]{2,4}$'),
+          CustomValidators.notOnlyWhiteSpace]),
+        phone: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(14)])
       }),
       shippingAddress: this._formBuilder.group({
-        country: [''],
-        state: [''],
-        city: [''],
-        zipCode: [''],
-        street: ['']
+        country: new FormControl('', Validators.required),
+        state: new FormControl('', Validators.required),
+        city: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          CustomValidators.notOnlyWhiteSpace]),
+        zipCode: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+          CustomValidators.notOnlyWhiteSpace]),
+        street: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5),
+          CustomValidators.notOnlyWhiteSpace
+        ])
       }),
+
+      // optional to use validation in billing address
       billingAddress: this._formBuilder.group({
         country: [''],
         state: [''],
@@ -48,10 +73,21 @@ export class CheckoutComponent implements OnInit {
         street: ['']
       }),
       creditCard: this._formBuilder.group({
-        cardType: [''],
-        nameOnCard: [''],
-        cardNumber: [''],
-        securityCode: [''],
+        cardType: new FormControl('', Validators.required),
+        nameOnCard: new FormControl('', [
+          Validators.required,
+          Validators.minLength(5)
+        ]),
+        cardNumber: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.pattern('[0-9]{16}')
+        ]),
+        securityCode: new FormControl('', [
+          Validators.required,
+          Validators.minLength(3),
+          CustomValidators.notOnlyWhiteSpace
+        ]),
         expirationMotnh: [''],
         expirationYear: ['']
       })
@@ -70,41 +106,61 @@ export class CheckoutComponent implements OnInit {
     //get credit card year
     this._dropDownService.getCreditYears().subscribe(
       data => {
-        console.log("Retrieved credit card years: "+ JSON.stringify(data))
+        console.log("Retrieved credit card years: " + JSON.stringify(data))
         this.creditCardYears = data
       }
     )
-      //get data countries
+    //get data countries
     this._dropDownService.getCountries().subscribe(
-      data =>{
+      data => {
         this.countries = data;
       }
     )
   }
 
 
-    handleMonthAndYears(){
-      const creditCardFormGroup = this.checkoutFormGroup.get('creditCard')
+  handleMonthAndYears() {
+    const creditCardFormGroup = this.checkoutFormGroup.get('creditCard')
 
-      const currentYear: number = new Date().getFullYear()
-      const selectedYear: number = Number(creditCardFormGroup?.value.expirationYear)
+    const currentYear: number = new Date().getFullYear()
+    const selectedYear: number = Number(creditCardFormGroup?.value.expirationYear)
 
-      //if this year == selected year then start value month with current month
-      //else, start value month with first month
-      let startMonth: number;
-      if(currentYear == selectedYear){
-        startMonth = new Date().getMonth() + 1
-      } else{
-        startMonth = 1
-      }
-
-      this._dropDownService.getCreditCardMonths(startMonth).subscribe(
-        data =>{
-          console.log("Retrieved credit card month: "+ JSON.stringify(data))
-          this.creditCardMonths = data
-        }
-      )
+    //if this year == selected year then start value month with current month
+    //else, start value month with first month
+    let startMonth: number;
+    if (currentYear == selectedYear) {
+      startMonth = new Date().getMonth() + 1
+    } else {
+      startMonth = 1
     }
+
+    this._dropDownService.getCreditCardMonths(startMonth).subscribe(
+      data => {
+        console.log("Retrieved credit card month: " + JSON.stringify(data))
+        this.creditCardMonths = data
+      }
+    )
+  }
+
+  //get validated data customer
+  get firstName() { return this.checkoutFormGroup.get('customer.firstName') }
+  get lastName() { return this.checkoutFormGroup.get('customer.lastName') }
+  get email() { return this.checkoutFormGroup.get('customer.email') }
+  get phone() { return this.checkoutFormGroup.get('customer.phone') }
+
+  // get validated data shipping address
+  get countryName() { return this.checkoutFormGroup.get('shippingAddress.country') }
+  get stateName() { return this.checkoutFormGroup.get('shippingAddress.state') }
+  get cityName() { return this.checkoutFormGroup.get('shippingAddress.city') }
+  get zipCode() { return this.checkoutFormGroup.get('shippingAddress.zipCode') }
+  get streetName() { return this.checkoutFormGroup.get('shippingAddress.street') }
+
+  //get validated data credit card
+  get cardType() { return this.checkoutFormGroup.get('creditCard.cardType') }
+  get creditCardOwner() { return this.checkoutFormGroup.get('creditCard.nameOnCard') }
+  get cardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber') }
+  get cardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode') }
+
   //copyToBillingAddress Method
   copyToBillingAddress(event: Event) {
     if (event.target instanceof HTMLInputElement) {
@@ -121,20 +177,20 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  getStates(formGroupName: string){
+  getStates(formGroupName: string) {
     const formGroup = this.checkoutFormGroup.get(formGroupName);
 
-    const  countryCode = formGroup?.value.country.iso2;
-    const  countryName = formGroup?.value.country.name;
+    const countryCode = formGroup?.value.country.iso2;
+    const countryName = formGroup?.value.country.name;
 
     console.log(`${formGroupName} country code: ${countryCode}`)
     console.log(`${formGroupName} country code: ${countryName}`)
 
     this._dropDownService.getStates(countryCode).subscribe(
-      data =>{
-        if(formGroupName === 'shippingAddress'){
+      data => {
+        if (formGroupName === 'shippingAddress') {
           this.shippingAddressStates = data;
-        } else{
+        } else {
           this.billingAddressStates = data
         }
         //chose first item as default
@@ -153,7 +209,12 @@ export class CheckoutComponent implements OnInit {
     console.log('----');
     console.log(this.checkoutFormGroup.get('creditCard')?.value)
     console.log('----');
-    console.log("The shipping addres country is "+ this.checkoutFormGroup.get('shippingAddress')?.value.country.name)
-    console.log("The billing addres country is "+ this.checkoutFormGroup.get('shippingAddress')?.value.state.name)
+    console.log("The shipping addres country is " + this.checkoutFormGroup.get('shippingAddress')?.value.country.name)
+    console.log("The billing addres country is " + this.checkoutFormGroup.get('shippingAddress')?.value.state.name)
+
+    if (this.checkoutFormGroup.invalid) {
+      this.checkoutFormGroup.markAllAsTouched();
+    }
+    console.log('CheckoutFormGroup is valid: ' + this.checkoutFormGroup.valid)
   }
 }

@@ -10,12 +10,31 @@
                                 <div class="checkout__input">
                                     <p>First Name<span>*</span></p>
                                     <input formControlName="firstName" type="text">
+                                    <div *ngIf="firstName?.invalid && (firstName?.dirty||firstName?.touched)"
+                                        class="alert alert-danger mt-2">
+                                        <div
+                                            *ngIf="firstName?.hasError('required')">
+                                            First Name is Required
+                                        </div>
+                                        <div *ngIf="firstName?.hasError('minlength')">
+                                            First Name must be at least 2 characters long
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Last Name<span>*</span></p>
                                     <input formControlName="lastName" type="text">
+                                    <div *ngIf="lastName?.invalid && (lastName?.dirty||lastName?.touched)"
+                                        class="alert alert-danger mt-2">
+                                        <div *ngIf="lastName?.hasError('required')">
+                                            Last Name is Required
+                                        </div>
+                                        <div *ngIf="lastName?.hasError('minlength')">
+                                            Last Name must be at least 2 characters long
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -24,12 +43,30 @@
                                 <div class="checkout__input">
                                     <p>Email<span>*</span></p>
                                     <input formControlName="email" type="email">
+                                    <div *ngIf="email?.invalid && (email?.dirty||email?.touched)"
+                                        class="alert alert-danger mt-2">
+                                        <div *ngIf="email?.hasError('required')">
+                                            Email is Required
+                                        </div>
+                                        <div *ngIf="email?.hasError('pattern')">
+                                            Email must be valid format
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Phone<span>*</span></p>
                                     <input formControlName="phone" type="text">
+                                    <div *ngIf="phone?.invalid && (phone?.dirty||phone?.touched)"
+                                        class="alert alert-danger mt-2">
+                                        <div *ngIf="phone?.hasError('required')">
+                                            Phone is Required
+                                        </div>
+                                        <div *ngIf="phone?.hasError('minlength')">
+                                            Minimum is 2 number
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -46,6 +83,11 @@
                                             {{country.name}}
                                         </option>
                                     </select>
+                                    <div *ngIf="countryName?.invalid && (countryName?.dirty || countryName?.touched)" class="alert alert-danger mt-2">
+                                        <div *ngIf="countryName?.hasError('required')">
+                                            Country is Required
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-8">
@@ -56,6 +98,11 @@
                                             {{state.name}}
                                         </option>
                                     </select>
+                                    <div *ngIf="stateName?.invalid && (stateName?.dirty || stateName?.touched)" class="alert alert-danger mt-2">
+                                        <div *ngIf="stateName?.hasError('required')">
+                                            State is Required
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -65,17 +112,41 @@
                                     <p>City<span>*</span></p>
                                     <input formControlName="city" type="text">
                                 </div>
+                                <div *ngIf="cityName?.invalid && (cityName?.dirty || cityName?.touched)" class="alert alert-danger mt-2">
+                                    <div *ngIf="cityName?.hasError('required')">
+                                        City is Required
+                                    </div>
+                                    <div *ngIf="cityName?.hasError('minlength')">
+                                        Minum 2 Characters long
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="checkout__input">
                                     <p>Postcode / ZIP<span>*</span></p>
                                     <input formControlName="zipCode" type="text">
                                 </div>
+                                <div *ngIf="zipCode?.invalid && (zipCode?.dirty || zipCode?.touched)" class="alert alert-danger mt-2">
+                                    <div *ngIf="zipCode?.hasError('required')">
+                                        Zip Code is required
+                                    </div>
+                                    <div *ngIf="zipCode?.hasError('minlength')">
+                                        Minum 5 Characters long
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="checkout__input">
                             <p>Street<span>*</span></p>
                             <input formControlName="street" type="text">
+                        </div>
+                        <div *ngIf="streetName?.invalid && (streetName?.dirty || streetName?.touched)" class="alert alert-danger mt-2">
+                            <div *ngIf="streetName?.hasError('required')">
+                                Street is Required
+                            </div>
+                            <div *ngIf="streetName?.hasError('minlength')">
+                                Minimum 5 Characters long
+                            </div>
                         </div>
                     </div>
                     <div class="checkout__input__checkbox">
@@ -91,7 +162,8 @@
                             <div class="col-lg-4">
                                 <div class="checkout__input">
                                     <p>Country<span>*</span></p>
-                                    <select formControlName="country" class="form-control" id="selectedCountry" (change)="getStates('billingAddress')">
+                                    <select formControlName="country" class="form-control" id="selectedCountry"
+                                        (change)="getStates('billingAddress')">
                                         <option *ngFor=" let country  of countries" [ngValue]="country">
                                             {{country.name}}
                                         </option>

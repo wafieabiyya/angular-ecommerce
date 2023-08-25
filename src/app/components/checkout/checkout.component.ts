@@ -4,6 +4,12 @@ import { State } from 'src/app/common/state';
 import { Country } from 'src/app/common/country';
 import { DropdownFormService } from 'src/app/services/dropdown-form.service';
 import { CustomValidators } from 'src/app/validators/custom-validators';
+import { CartService } from 'src/app/services/cart.service';
+import { CheckoutService } from 'src/app/services/checkout.service';
+import { Router } from '@angular/router';
+import { Order } from 'src/app/common/order';
+import { OrderItem } from 'src/app/common/order-item';
+import { Purchase } from 'src/app/common/purchase';
 
 
 @Component({
@@ -17,17 +23,24 @@ export class CheckoutComponent implements OnInit {
   billingAddressStates: State[] = [];
   shippingAddressStates: State[] = [];
 
+  totalQuantity: number = 0
+  totalPrice: number = 0
+
   creditCardMonths: number[] = []
   creditCardYears: number[] = []
 
   countries: Country[] = [];
 
   constructor(private _formBuilder: FormBuilder,
-    private _dropDownService: DropdownFormService) {
-
+    private _dropDownService: DropdownFormService,
+    private _cartService: CartService,
+    private _checkoutService: CheckoutService,
+    private _route: Router) {
   }
 
   ngOnInit(): void {
+    this.updateCartTotal()
+
     this.checkoutFormGroup = this._formBuilder.group({
       customer: this._formBuilder.group({
         firstName: new FormControl('', [
@@ -39,7 +52,6 @@ export class CheckoutComponent implements OnInit {
           CustomValidators.notOnlyWhiteSpace]),
         email: new FormControl('', [
           Validators.required,
-          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\[a-z]{2,4}$'),
           CustomValidators.notOnlyWhiteSpace]),
         phone: new FormControl('', [
           Validators.required,
@@ -81,7 +93,6 @@ export class CheckoutComponent implements OnInit {
         cardNumber: new FormControl('', [
           Validators.required,
           Validators.minLength(2),
-          Validators.pattern('[0-9]{16}')
         ]),
         securityCode: new FormControl('', [
           Validators.required,
@@ -118,6 +129,7 @@ export class CheckoutComponent implements OnInit {
     )
   }
 
+  
 
   handleMonthAndYears() {
     const creditCardFormGroup = this.checkoutFormGroup.get('creditCard')
@@ -158,8 +170,9 @@ export class CheckoutComponent implements OnInit {
   //get validated data credit card
   get cardType() { return this.checkoutFormGroup.get('creditCard.cardType') }
   get creditCardOwner() { return this.checkoutFormGroup.get('creditCard.nameOnCard') }
-  get cardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber') }
-  get cardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode') }
+  //as FormControl used to remove safe navigation '?' when calling the get() on html 
+  get cardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber') as FormControl }
+  get cardSecurityCode()  { return this.checkoutFormGroup.get('creditCard.securityCode') }
 
   //copyToBillingAddress Method
   copyToBillingAddress(event: Event) {
@@ -198,23 +211,59 @@ export class CheckoutComponent implements OnInit {
       }
     )
   }
+
+  updateCartTotal(){
+    //subscribe into cart totalPrice
+    this._cartService.totalPrice.subscribe(
+      data => this.totalPrice = data
+    )
+
+    //subscribe into cart totalQuantity
+    this._cartService.totalQuantity.subscribe(
+      data => this.totalQuantity = data
+    )
+  }
+
   //submitMethod
   onSubmit() {
     console.log("Handling the submit button");
-    console.log(this.checkoutFormGroup.get('customer')?.value);
-    console.log('----');
-    console.log(this.checkoutFormGroup.get('shippingAddress')?.value);
-    console.log('----');
-    console.log(this.checkoutFormGroup.get('billingAddress')?.value);
-    console.log('----');
-    console.log(this.checkoutFormGroup.get('creditCard')?.value)
-    console.log('----');
-    console.log("The shipping addres country is " + this.checkoutFormGroup.get('shippingAddress')?.value.country.name)
-    console.log("The billing addres country is " + this.checkoutFormGroup.get('shippingAddress')?.value.state.name)
-
     if (this.checkoutFormGroup.invalid) {
       this.checkoutFormGroup.markAllAsTouched();
+      return;
     }
-    console.log('CheckoutFormGroup is valid: ' + this.checkoutFormGroup.valid)
+
+    //set up order
+    let order = new Order();
+    order.totalPrice = this.totalPrice;
+    order.totalQuantity = this.totalQuantity;
+
+    // get cart item
+    const cartItems = this._cartService.cartItems;
+
+    //create orderItems from cartItems
+    let orderItems: OrderItem[] = cartItems.map(
+      tempCartItem => new OrderItem(tempCartItem)
+    )
+
+    //set up purchase
+      let purchase = new Purchase();
+
+    //populate purchase - customer
+    purchase.customer = this.checkoutFormGroup.controls['customer'].value;
+
+    //popoulate purchase - shipping address
+    purchase.shippingAddress = this.checkoutFormGroup.controls['shippingAddress'].value;
+    //for parsing JSON into string
+    const shippingCountry: Country = JSON.parse(JSON.stringify(purchase.shippingAddress.country));
+    const shippingState: State = JSON.parse(JSON.stringify(purchase.shippingAddress.state))
+
+    purchase.shippingAddress.country = shippingCountry.name;
+    purchase.shippingAddress.state = shippingState.name
+
+    //populate purchase - billing address
+
+    //populate purchase - order & orderItems
+
+    //get REST API from checkoutServices
   }
 }

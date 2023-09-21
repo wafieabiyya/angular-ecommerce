@@ -253,7 +253,7 @@ export class CheckoutComponent implements OnInit {
 
     //popoulate purchase - shipping address
     purchase.shippingAddress = this.checkoutFormGroup.controls['shippingAddress'].value;
-    //for parsing JSON into string
+    //convert parsing JSON into string
     const shippingCountry: Country = JSON.parse(JSON.stringify(purchase.shippingAddress.country));
     const shippingState: State = JSON.parse(JSON.stringify(purchase.shippingAddress.state))
 
@@ -261,9 +261,42 @@ export class CheckoutComponent implements OnInit {
     purchase.shippingAddress.state = shippingState.name
 
     //populate purchase - billing address
+      purchase.billingAddress = this.checkoutFormGroup.controls['billingAddress'].value;
+      //convert parsing JSON into string
+      const billingCountry: Country = JSON.parse(JSON.stringify(purchase.billingAddress.country));
+      const billingState: State = JSON.parse(JSON.stringify(purchase.billingAddress.state));
+
+      purchase.billingAddress.country = billingCountry.name;
+      purchase.billingAddress.state = billingCountry.name
 
     //populate purchase - order & orderItems
+      purchase.order = order;
+      purchase.orderItems = orderItems;
 
     //get REST API from checkoutServices
+    this._checkoutService.placeOrder(purchase).subscribe(
+      {
+        next: response => {
+          alert(`Your order has been received.\nOrder tracking number: ${response.orderTrackingNumber}`)
+          //if success reset cart
+          this.resetCart();
+        },
+        error:err =>{
+          alert(`Some error ocured: ${err.message}` )
+        }
+      }  
+    )
+  }
+  resetCart(){
+    //reset datas from cart
+    this._cartService.cartItems = []
+    this._cartService.totalPrice.next(0)
+    this._cartService.totalQuantity.next(0)
+
+    //reset from data
+    this.checkoutFormGroup.reset();
+
+    //redircet into landing page
+    this._route.navigateByUrl("/products")
   }
 }
